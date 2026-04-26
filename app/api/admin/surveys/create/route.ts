@@ -1,65 +1,44 @@
-import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
-function toKebabCase(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-}
+import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
+  const supabase = await createClient()
+  const body = await req.json()
+
   const {
     title,
     sponsor,
     industry,
     jobTitle,
-    companySize,
-    painPointHypothesis,
-    questionCount,
-    questionLengthPreference,
+    companySizes,
+    painPoint,
+    numQuestions,
+    questionLength,
     slug,
     giftCardAmount,
-  } = await req.json()
+  } = body
 
-  const supabase = await createClient()
-  const baseSlug = toKebabCase(slug || title || 'survey')
+  const finalSlug = slug || title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 
-  let finalSlug = baseSlug
-  let attempt = 1
-  // Keep slugs unique in case user-entered slug already exists.
-  while (true) {
-    const { data: existing } = await supabase
-      .from('surveys')
-      .select('id')
-      .eq('slug', finalSlug)
-      .maybeSingle()
-    if (!existing) break
-    attempt += 1
-    finalSlug = `${baseSlug}-${attempt}`
-  }
+  const topic = `${industry} industry research focused on: ${painPoint}`
 
-  const topic = `${industry} industry research focused on ${painPointHypothesis}`
-  const question_guide = `Ask ${questionCount} questions following this theme: ${painPointHypothesis}. Target respondent is a ${jobTitle} at a ${companySize} company in ${industry}. Keep each question ${questionLengthPreference}.`
-  const systemPromptContext = `Survey title: ${title}. Sponsor: ${sponsor}. Target ICP industry: ${industry}. Target ICP job title: ${jobTitle}. Target ICP company size: ${companySize}. Core pain point hypothesis: ${painPointHypothesis}. Number of questions: ${questionCount}. Question length preference: ${questionLengthPreference}. Gift card incentive amount: $${giftCardAmount}.`
-  void systemPromptContext
+  const question_guide = `Ask ${numQuestions} questions following this theme: ${painPoint}. Target respondent is a ${jobTitle} at a ${companySizes} company in ${industry}. Keep each question ${questionLength}. Uncover pain points naturally without being obvious.`
 
   const { data, error } = await supabase
     .from('surveys')
     .insert({
       slug: finalSlug,
       title,
-      sponsor,
       topic,
+      sponsor,
       question_guide,
     })
-    .select('id, slug')
+    .select()
     .single()
 
-  if (error || !data) {
-    return NextResponse.json({ error: 'Failed to create survey' }, { status: 500 })
+  if (error) {
+    console.error('Supabase insert error:', error)
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
   return NextResponse.json({ id: data.id, slug: data.slug })
