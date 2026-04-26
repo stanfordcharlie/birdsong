@@ -13,7 +13,7 @@ export default async function ResponseDetailPage({ params }: { params: Promise<{
 
   const { data: response } = await supabase
     .from('responses')
-    .select('id, respondent_name, respondent_email, respondent_phone, lead_score, pain_points, messages, created_at, surveys(title)')
+    .select('*, surveys:survey_id(title)')
     .eq('id', id)
     .single()
 
@@ -32,7 +32,7 @@ export default async function ResponseDetailPage({ params }: { params: Promise<{
         <h1 style={{ margin: '16px 0 8px', fontSize: 28, fontWeight: 600 }}>{response.respondent_name}</h1>
         <p style={{ margin: '0 0 4px' }}>{response.respondent_email}</p>
         <p style={{ margin: '0 0 4px' }}>{response.respondent_phone || ''}</p>
-        <p style={{ margin: '0 0 20px' }}>{response.surveys?.title || ''}</p>
+        <p style={{ margin: '0 0 20px' }}>{(response.surveys as any)?.title || ''}</p>
 
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 14, marginBottom: 4 }}>Lead Score</div>
