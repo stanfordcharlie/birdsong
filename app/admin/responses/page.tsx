@@ -5,7 +5,7 @@ export default async function AdminResponsesPage() {
   const supabase = await createClient()
   const { data: responses } = await supabase
     .from('responses')
-    .select('id, respondent_name, respondent_email, respondent_phone, lead_score, pain_points, created_at, surveys(title)')
+    .select('*, surveys:survey_id(title)')
     .eq('completed', true)
     .order('created_at', { ascending: false })
 
@@ -36,7 +36,7 @@ export default async function AdminResponsesPage() {
                   </td>
                   <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>{response.respondent_email}</td>
                   <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>{response.respondent_phone || ''}</td>
-                  <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>{response.surveys?.title || ''}</td>
+                  <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>{(response.surveys as any)?.title || ''}</td>
                   <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>{response.lead_score ?? ''}</td>
                   <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
                     {Array.isArray(response.pain_points) ? response.pain_points.join(', ') : ''}
