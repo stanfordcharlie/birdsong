@@ -11,18 +11,19 @@ export async function POST(req: Request) {
     industry,
     jobTitle,
     companySizes,
-    painPoint,
+    researchTheme,
     numQuestions,
     questionLength,
+    tone,
     slug,
     giftCardAmount,
   } = body
 
   const finalSlug = slug || title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 
-  const topic = `${industry} industry research focused on: ${painPoint}`
+  const topic = `Market research: ${researchTheme} among ${jobTitle} professionals in ${industry}`
 
-  const question_guide = `Ask ${numQuestions} questions following this theme: ${painPoint}. Target respondent is a ${jobTitle} at a ${companySizes} company in ${industry}. Keep each question ${questionLength}. Uncover pain points naturally without being obvious.`
+  const question_guide = `You are conducting genuine market research about: ${researchTheme}. Your respondents are ${jobTitle} professionals. Ask ${numQuestions} natural, open-ended questions that help you genuinely understand how they work, what tools they use, and what their day-to-day looks like. Tone: ${tone}. Never ask about problems or pain points directly. Just be curious about how they operate.`
 
   const { data, error } = await supabase
     .from('surveys')

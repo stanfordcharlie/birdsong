@@ -38,6 +38,7 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
   const emailInputRef = useRef<HTMLInputElement | null>(null)
   const phoneInputRef = useRef<HTMLInputElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const bottomRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const storedTheme = window.localStorage.getItem('birdsong-theme')
@@ -53,6 +54,10 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
       inputRef.current?.focus()
     }
   }, [messages, stage])
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, loading])
 
   useEffect(() => {
     if (stage === 'intro') {
@@ -133,6 +138,9 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
     setInput('')
     setMessages(prev => [...prev, { role: 'user', content: userMessage }])
     setLoading(true)
+    requestAnimationFrame(() => {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    })
     const res = await fetch('/api/responses/message', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -233,6 +241,7 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
             <div style={{ background: colors.assistantBubble, borderRadius: 12, padding: '12px 16px', fontSize: 15, color: colors.text }}>...</div>
           </div>
         )}
+        <div ref={bottomRef} />
       </div>
       <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, padding: '12px 24px 16px', background: colors.background }}>
         <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', gap: 8 }}>

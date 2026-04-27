@@ -13,7 +13,7 @@ export async function completeResponse(response: any) {
     messages: [
       {
         role: 'user',
-        content: `Analyze this interview transcript and return ONLY a JSON object with no markdown, no backticks, no explanation. Format: {pain_points: [array of specific pain points mentioned], lead_score: number}. Score the lead 1-10 using these strict criteria: 9-10: explicitly mentions budget, timeline, or is actively looking for a solution. 7-8: clear pain points that match a software buying need. 5-6: some challenges mentioned but vague or low urgency. 3-4: general complaints, no buying signals. 1-2: no pain points or irrelevant responses. Be strict -- most responses should score 5-7 unless there are strong buying signals. Transcript: ${JSON.stringify(response.messages)}`,
+        content: `You are analyzing a market research interview transcript. Based on what the respondent shared naturally in conversation, return ONLY a JSON object: {pain_points: [array of implicit challenges or friction points you can infer from what they described, even if they never called them problems], lead_score: number}. Score 1-10: 9-10 if they described significant operational friction that a software solution could address and mentioned budget or urgency. 7-8 if clear implicit friction exists. 5-6 if mild friction inferred. 3-4 if mostly positive, little friction. 1-2 if no relevant friction detectable. Be conservative -- default to 5 unless signals are clear. Transcript: ${JSON.stringify(response.messages)}`,
       },
     ],
   })

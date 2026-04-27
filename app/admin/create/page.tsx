@@ -18,9 +18,10 @@ export default function CreateSurveyPage() {
   const [industry, setIndustry] = useState('')
   const [jobTitle, setJobTitle] = useState('')
   const [companySize, setCompanySize] = useState('11-50')
-  const [painPointHypothesis, setPainPointHypothesis] = useState('')
+  const [researchTheme, setResearchTheme] = useState('')
   const [questionCount, setQuestionCount] = useState(5)
   const [questionLengthPreference, setQuestionLengthPreference] = useState('Short (1 sentence)')
+  const [tone, setTone] = useState('Conversational and curious (recommended)')
   const [slug, setSlug] = useState('')
   const [slugEdited, setSlugEdited] = useState(false)
   const [giftCardAmount, setGiftCardAmount] = useState(10)
@@ -47,10 +48,11 @@ export default function CreateSurveyPage() {
         sponsor,
         industry,
         jobTitle,
-        companySize,
-        painPointHypothesis,
-        questionCount,
-        questionLengthPreference,
+        companySizes: companySize,
+        researchTheme,
+        numQuestions: questionCount,
+        questionLength: questionLengthPreference,
+        tone,
         slug,
         giftCardAmount,
       }),
@@ -82,8 +84,8 @@ export default function CreateSurveyPage() {
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Target ICP: industry</label>
           <input value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="B2B SaaS" required style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
 
-          <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Target ICP: job title</label>
-          <input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="VP of Sales" required style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
+          <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Who are we talking to?</label>
+          <input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="e.g. Parks and recreation directors" required style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
 
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Target ICP: company size</label>
           <select value={companySize} onChange={(e) => setCompanySize(e.target.value)} required style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }}>
@@ -94,8 +96,8 @@ export default function CreateSurveyPage() {
             <option value="1000+">1000+</option>
           </select>
 
-          <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Core pain point hypothesis</label>
-          <textarea value={painPointHypothesis} onChange={(e) => setPainPointHypothesis(e.target.value)} placeholder="We believe sales teams struggle with lead quality from conferences" required rows={4} style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
+          <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Research theme</label>
+          <textarea value={researchTheme} onChange={(e) => setResearchTheme(e.target.value)} placeholder="e.g. How parks and recreation departments manage their software and technology stack" required rows={4} style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
 
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Number of questions</label>
           <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
@@ -108,6 +110,13 @@ export default function CreateSurveyPage() {
             <option value="Short (1 sentence)">Short (1 sentence)</option>
             <option value="Medium (2-3 sentences)">Medium (2-3 sentences)</option>
             <option value="Detailed (4+ sentences)">Detailed (4+ sentences)</option>
+          </select>
+
+          <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Interview tone</label>
+          <select value={tone} onChange={(e) => setTone(e.target.value)} required style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }}>
+            <option value="Conversational and curious (recommended)">Conversational and curious (recommended)</option>
+            <option value="Peer-to-peer casual">Peer-to-peer casual</option>
+            <option value="Academic and structured">Academic and structured</option>
           </select>
 
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>URL slug</label>
