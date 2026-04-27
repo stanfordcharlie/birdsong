@@ -1,13 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import AdminLayout from '@/components/AdminLayout'
-
-function getGreeting() {
-  const hour = new Date().getHours()
-  if (hour < 12) return 'morning'
-  if (hour < 18) return 'afternoon'
-  return 'evening'
-}
+import Greeting from '@/components/Greeting'
 
 function getLeadScoreColor(score: number) {
   if (score >= 8) return '#1a1a1a'
@@ -30,17 +24,11 @@ export default async function HomePage() {
       .limit(5),
   ])
 
-  const today = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
-  const greeting = getGreeting()
-
   return (
     <AdminLayout>
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
-          <div>
-            <div style={{ fontSize: 22, fontWeight: 600 }}>{`Good ${greeting}, Charlie`}</div>
-            <div style={{ fontSize: 13, color: '#999', marginTop: 4 }}>{today}</div>
-          </div>
+          <Greeting name="Charlie" />
           <Link href="/admin/create" style={{ background: '#1a1a1a', color: '#fff', borderRadius: 8, padding: '8px 16px', fontSize: 13, textDecoration: 'none' }}>
             + New Survey
           </Link>
