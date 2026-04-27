@@ -8,6 +8,7 @@ interface Survey {
   topic: string
   sponsor: string
   question_guide: string
+  custom_fields?: { label: string, required: boolean }[]
 }
 
 interface Message {
@@ -29,6 +30,7 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>({})
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [responseId, setResponseId] = useState<string | null>(null)
@@ -37,7 +39,7 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
   const nameInputRef = useRef<HTMLInputElement | null>(null)
   const emailInputRef = useRef<HTMLInputElement | null>(null)
   const phoneInputRef = useRef<HTMLInputElement | null>(null)
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
     if (stage !== 'interview' || messages.length === 0) return
     const lastMessage = messages[messages.length - 1]
     if (lastMessage.role === 'assistant') {
-      inputRef.current?.focus()
+      textareaRef.current?.focus()
     }
   }, [messages, stage])
 
@@ -119,11 +121,14 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
 
   async function handleStart() {
     if (!name || !email || phone.length !== 14) return
+    const customFields = Array.isArray(survey.custom_fields) ? survey.custom_fields : []
+    const missingRequiredCustom = customFields.some((field) => field.required && !customFieldValues[field.label]?.trim())
+    if (missingRequiredCustom) return
     setLoading(true)
     const res = await fetch('/api/responses/start', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ surveyId: survey.id, respondentName: name, respondentEmail: email, respondentPhone: phone }),
+      body: JSON.stringify({ surveyId: survey.id, respondentName: name, respondentEmail: email, respondentPhone: phone, customFieldValues }),
     })
     const data = await res.json()
     setResponseId(data.responseId)
@@ -136,6 +141,7 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
     if (!input.trim() || !responseId) return
     const userMessage = input.trim()
     setInput('')
+    if (textareaRef.current) textareaRef.current.style.height = '44px'
     setMessages(prev => [...prev, { role: 'user', content: userMessage }])
     setLoading(true)
     requestAnimationFrame(() => {
@@ -208,6 +214,18 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
             ? { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 24, border: '1px solid #444', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#2c2c2e', color: '#e8e8e8' }
             : { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 24, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }}
         />
+        {(Array.isArray(survey.custom_fields) ? survey.custom_fields : []).map((field, idx) => (
+          <input
+            key={`${field.label}-${idx}`}
+            placeholder={field.label}
+            value={customFieldValues[field.label] || ''}
+            onChange={e => setCustomFieldValues((prev) => ({ ...prev, [field.label]: e.target.value }))}
+            style={isDark
+              ? { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 12, border: '1px solid #444', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#2c2c2e', color: '#e8e8e8' }
+              : { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 12, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }}
+            required={field.required}
+          />
+        ))}
         <button onClick={handleStart} disabled={loading || !name || !email || phone.length !== 14} style={{ background: isDark ? '#3a3a3c' : '#1a1a1a', color: '#ffffff', border: 'none', borderRadius: 8, padding: '12px 24px', fontSize: 16, cursor: 'pointer', opacity: name && email && phone.length === 14 ? 1 : 0.5 }}>
           {loading ? 'Starting...' : 'Begin Interview'}
         </button>
@@ -245,17 +263,27 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
       </div>
       <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, padding: '12px 24px 16px', background: colors.background }}>
         <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', gap: 8 }}>
-          <input
-            ref={inputRef}
+          <textarea
+            ref={textareaRef}
             value={input}
             onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
+            onInput={e => {
+              const el = e.currentTarget
+              el.style.height = 'auto'
+              el.style.height = el.scrollHeight + 'px'
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                handleSend()
+              }
+            }}
             placeholder="Type your response..."
             disabled={loading}
             className={isDark ? 'birdsong-chat-input-dark' : undefined}
             style={isDark
-              ? { flex: 1, padding: '12px 16px', border: '1px solid #2a5298', borderRadius: 8, fontSize: 15, outline: 'none', background: '#1e3a5f', color: '#e8e8e8' }
-              : { flex: 1, padding: '12px 16px', border: '1px solid #ddd', borderRadius: 8, fontSize: 15, outline: 'none', background: colors.inputBackground, color: colors.text }}
+              ? { flex: 1, resize: 'none', overflow: 'hidden', minHeight: '44px', maxHeight: '200px', width: '100%', padding: '12px 16px', border: '1px solid #2a5298', borderRadius: 8, fontSize: 15, lineHeight: 1.5, fontFamily: 'Inter, sans-serif', outline: 'none', background: '#1e3a5f', color: '#e8e8e8' }
+              : { flex: 1, resize: 'none', overflow: 'hidden', minHeight: '44px', maxHeight: '200px', width: '100%', padding: '12px 16px', border: '1px solid #ddd', borderRadius: 8, fontSize: 15, lineHeight: 1.5, fontFamily: 'Inter, sans-serif', outline: 'none', background: colors.inputBackground, color: colors.text }}
           />
           <button onClick={handleSend} disabled={loading || !input.trim()} style={{ background: '#1a1a1a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 20px', fontSize: 15, cursor: 'pointer', opacity: loading ? 0.6 : 1 }}>
             Send

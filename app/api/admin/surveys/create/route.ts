@@ -17,6 +17,7 @@ export async function POST(req: Request) {
     tone,
     slug,
     giftCardAmount,
+    customFields,
   } = body
 
   const finalSlug = slug || title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
@@ -24,6 +25,15 @@ export async function POST(req: Request) {
   const topic = `Market research: ${researchTheme} among ${jobTitle} professionals in ${industry}`
 
   const question_guide = `You are conducting genuine market research about: ${researchTheme}. Your respondents are ${jobTitle} professionals. Ask ${numQuestions} natural, open-ended questions that help you genuinely understand how they work, what tools they use, and what their day-to-day looks like. Tone: ${tone}. Never ask about problems or pain points directly. Just be curious about how they operate.`
+
+  // Admin needs to run this SQL:
+  // alter table surveys add column if not exists custom_fields jsonb default '[]';
+  let parsedCustomFields: unknown = []
+  try {
+    parsedCustomFields = typeof customFields === 'string' ? JSON.parse(customFields) : (customFields || [])
+  } catch {
+    parsedCustomFields = []
+  }
 
   const { data, error } = await supabase
     .from('surveys')
@@ -33,6 +43,7 @@ export async function POST(req: Request) {
       topic,
       sponsor,
       question_guide,
+      custom_fields: parsedCustomFields,
     })
     .select()
     .single()

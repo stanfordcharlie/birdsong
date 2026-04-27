@@ -25,6 +25,7 @@ export default function CreateSurveyPage() {
   const [slug, setSlug] = useState('')
   const [slugEdited, setSlugEdited] = useState(false)
   const [giftCardAmount, setGiftCardAmount] = useState(10)
+  const [customFields, setCustomFields] = useState<{ label: string, required: boolean }[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [createdSlug, setCreatedSlug] = useState<string | null>(null)
   const minutes = numQuestions === '' ? 0 : Math.round((Number(numQuestions) * 90) / 60)
@@ -56,6 +57,7 @@ export default function CreateSurveyPage() {
         tone,
         slug,
         giftCardAmount,
+        customFields: JSON.stringify(customFields),
       }),
     })
 
@@ -137,6 +139,65 @@ export default function CreateSurveyPage() {
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
             <span style={{ marginRight: 8, fontSize: 16 }}>$</span>
             <input type="number" min={0} value={giftCardAmount} onChange={(e) => setGiftCardAmount(Number(e.target.value) || 0)} required style={{ width: '100%', padding: '12px 16px', border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
+          </div>
+
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#1a1a1a', marginBottom: 8 }}>Custom respondent fields</label>
+          <p style={{ fontSize: 12, color: '#999', marginTop: 0, marginBottom: 12 }}>Add fields to collect additional info from respondents before the interview starts</p>
+
+          <div style={{ marginBottom: 12 }}>
+            {customFields.map((field, index) => (
+              <div key={index} style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 8 }}>
+                <input
+                  value={field.label}
+                  onChange={(e) => {
+                    const next = [...customFields]
+                    next[index] = { ...next[index], label: e.target.value }
+                    setCustomFields(next)
+                  }}
+                  placeholder="Field label"
+                  style={{ flex: 1, padding: '10px 12px', border: '1px solid #ccc', borderRadius: 8, fontSize: 14, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }}
+                />
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#666' }}>
+                  <input
+                    type="checkbox"
+                    checked={field.required}
+                    onChange={(e) => {
+                      const next = [...customFields]
+                      next[index] = { ...next[index], required: e.target.checked }
+                      setCustomFields(next)
+                    }}
+                  />
+                  Required
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setCustomFields((prev) => prev.filter((_, i) => i !== index))}
+                  style={{ color: '#999', background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
+            <button
+              type="button"
+              onClick={() => setCustomFields((prev) => [...prev, { label: '', required: false }])}
+              style={{ background: 'transparent', border: '1px dashed #ccc', borderRadius: 8, padding: '8px 16px', fontSize: 13, color: '#666', cursor: 'pointer' }}
+            >
+              Add field
+            </button>
+            {['Company name', 'Job title', 'LinkedIn URL'].map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => setCustomFields((prev) => [...prev, { label: preset, required: false }])}
+                style={{ background: '#f0f0f0', border: 'none', borderRadius: 20, padding: '4px 12px', fontSize: 12, cursor: 'pointer' }}
+              >
+                {preset}
+              </button>
+            ))}
           </div>
 
           <button type="submit" disabled={submitting} style={{ background: '#1a1a1a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 24px', fontSize: 16, cursor: 'pointer', opacity: submitting ? 0.6 : 1 }}>
