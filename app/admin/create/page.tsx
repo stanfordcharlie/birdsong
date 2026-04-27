@@ -19,7 +19,7 @@ export default function CreateSurveyPage() {
   const [jobTitle, setJobTitle] = useState('')
   const [companySize, setCompanySize] = useState('11-50')
   const [researchTheme, setResearchTheme] = useState('')
-  const [questionCount, setQuestionCount] = useState(5)
+  const [numQuestions, setNumQuestions] = useState<string | number>(5)
   const [questionLengthPreference, setQuestionLengthPreference] = useState('Short (1 sentence)')
   const [tone, setTone] = useState('Conversational and curious (recommended)')
   const [slug, setSlug] = useState('')
@@ -27,7 +27,8 @@ export default function CreateSurveyPage() {
   const [giftCardAmount, setGiftCardAmount] = useState(10)
   const [submitting, setSubmitting] = useState(false)
   const [createdSlug, setCreatedSlug] = useState<string | null>(null)
-  const estimatedMinutes = useMemo(() => Math.round((questionCount * 90) / 60), [questionCount])
+  const minutes = numQuestions === '' ? 0 : Math.round((Number(numQuestions) * 90) / 60)
+  const inputStyle = { width: 160, padding: '12px 16px', border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box' as const, background: '#ffffff', color: '#1a1a1a' }
 
   useEffect(() => {
     if (!slugEdited) {
@@ -50,7 +51,7 @@ export default function CreateSurveyPage() {
         jobTitle,
         companySizes: companySize,
         researchTheme,
-        numQuestions: questionCount,
+        numQuestions,
         questionLength: questionLengthPreference,
         tone,
         slug,
@@ -85,7 +86,7 @@ export default function CreateSurveyPage() {
           <input value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="B2B SaaS" required style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
 
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Who are we talking to?</label>
-          <input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="e.g. Parks and recreation directors" required style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
+          <input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="e.g. VP of Sales, Head of Sales, Director of Sales" required style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
 
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Target ICP: company size</label>
           <select value={companySize} onChange={(e) => setCompanySize(e.target.value)} required style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }}>
@@ -97,12 +98,22 @@ export default function CreateSurveyPage() {
           </select>
 
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Research theme</label>
-          <textarea value={researchTheme} onChange={(e) => setResearchTheme(e.target.value)} placeholder="e.g. How parks and recreation departments manage their software and technology stack" required rows={4} style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
+          <textarea value={researchTheme} onChange={(e) => setResearchTheme(e.target.value)} placeholder="e.g. How B2B SaaS sales teams build and manage their outbound pipeline" required rows={4} style={{ display: 'block', width: '100%', padding: '12px 16px', marginBottom: 16, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
 
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Number of questions</label>
           <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
-            <input type="number" min={3} max={12} value={questionCount} onChange={(e) => setQuestionCount(Math.max(3, Math.min(12, Number(e.target.value) || 3)))} required style={{ width: 160, padding: '12px 16px', border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
-            <input readOnly value={`~${estimatedMinutes} minutes`} style={{ flex: 1, padding: '12px 16px', border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
+            <input
+              type="text"
+              inputMode="numeric"
+              value={numQuestions}
+              onChange={e => {
+                const val = e.target.value.replace(/\D/g, '')
+                setNumQuestions(val === '' ? '' : Math.min(12, Math.max(1, parseInt(val))))
+              }}
+              placeholder="5"
+              style={inputStyle}
+            />
+            <input readOnly value={`~${minutes} minutes`} style={{ flex: 1, padding: '12px 16px', border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }} />
           </div>
 
           <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>Question length preference</label>
