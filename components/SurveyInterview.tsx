@@ -92,6 +92,8 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
       }
 
   const isDark = theme === 'dark'
+  const questionCountMatch = survey.question_guide.match(/Ask\s+(\d+)\s+questions/i)
+  const introMinutes = questionCountMatch ? Math.round((Number(questionCountMatch[1]) * 90) / 60) : null
 
   const themeToggle = (
     <button
@@ -159,11 +161,17 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
   }
 
   if (stage === 'intro') return (
-    <div style={{ background: colors.background, minHeight: '100vh', color: colors.text, fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ background: colors.background, minHeight: '100vh', color: colors.text, fontFamily: 'Inter, sans-serif', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       {themeToggle}
-      <div style={{ maxWidth: 560, margin: '0 auto', padding: '80px 24px' }}>
-        <h1 style={{ fontSize: 24, fontWeight: 600, marginBottom: 8 }}>{survey.title}</h1>
-        <p style={{ color: colors.text, marginBottom: 32 }}>This is a short research interview. Your responses are confidential and will be used to generate an industry report.</p>
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '40px 24px', textAlign: 'center', width: '100%' }}>
+        <div className="birdsong-logo-pulse" style={{ width: 48, height: 48, borderRadius: '50%', background: '#1a1a1a', color: '#fff', fontSize: 20, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+          B
+        </div>
+        <h1 style={{ fontSize: 26, fontWeight: 700, marginTop: 20, marginBottom: 0 }}>{survey.title}</h1>
+        <p style={{ fontSize: 13, color: '#999', marginTop: 4, marginBottom: 0 }}>{`A research study by ${survey.sponsor}`}</p>
+        <div style={{ width: 40, height: 2, background: '#e5e5e5', margin: '20px auto' }} />
+        <p style={{ fontSize: 14, color: '#666', lineHeight: 1.6, marginBottom: 28 }}>This is a short confidential research interview. Your responses help shape an industry report and will never be shared publicly.</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <input
           ref={nameInputRef}
           placeholder="Your name"
@@ -175,10 +183,10 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
               emailInputRef.current?.focus()
             }
           }}
-          className={isDark ? 'birdsong-intro-input-dark' : undefined}
+          className={isDark ? 'birdsong-intro-input birdsong-intro-input-dark' : 'birdsong-intro-input'}
           style={isDark
-            ? { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 12, border: '1px solid #444', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#2c2c2e', color: '#e8e8e8' }
-            : { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 12, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }}
+            ? { display: 'block', width: '100%', padding: '12px 4px', border: 'none', borderBottom: '1px solid #ddd', borderRadius: 0, fontSize: 15, boxSizing: 'border-box', background: 'transparent', color: '#e8e8e8' }
+            : { display: 'block', width: '100%', padding: '12px 4px', border: 'none', borderBottom: '1px solid #ddd', borderRadius: 0, fontSize: 15, boxSizing: 'border-box', background: 'transparent', color: '#1a1a1a' }}
         />
         <input
           ref={emailInputRef}
@@ -191,10 +199,10 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
               phoneInputRef.current?.focus()
             }
           }}
-          className={isDark ? 'birdsong-intro-input-dark' : undefined}
+          className={isDark ? 'birdsong-intro-input birdsong-intro-input-dark' : 'birdsong-intro-input'}
           style={isDark
-            ? { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 24, border: '1px solid #444', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#2c2c2e', color: '#e8e8e8' }
-            : { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 24, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }}
+            ? { display: 'block', width: '100%', padding: '12px 4px', border: 'none', borderBottom: '1px solid #ddd', borderRadius: 0, fontSize: 15, boxSizing: 'border-box', background: 'transparent', color: '#e8e8e8' }
+            : { display: 'block', width: '100%', padding: '12px 4px', border: 'none', borderBottom: '1px solid #ddd', borderRadius: 0, fontSize: 15, boxSizing: 'border-box', background: 'transparent', color: '#1a1a1a' }}
         />
         <input
           ref={phoneInputRef}
@@ -209,10 +217,10 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
               void handleStart()
             }
           }}
-          className={isDark ? 'birdsong-intro-input-dark' : undefined}
+          className={isDark ? 'birdsong-intro-input birdsong-intro-input-dark' : 'birdsong-intro-input'}
           style={isDark
-            ? { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 24, border: '1px solid #444', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#2c2c2e', color: '#e8e8e8' }
-            : { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 24, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }}
+            ? { display: 'block', width: '100%', padding: '12px 4px', border: 'none', borderBottom: '1px solid #ddd', borderRadius: 0, fontSize: 15, boxSizing: 'border-box', background: 'transparent', color: '#e8e8e8' }
+            : { display: 'block', width: '100%', padding: '12px 4px', border: 'none', borderBottom: '1px solid #ddd', borderRadius: 0, fontSize: 15, boxSizing: 'border-box', background: 'transparent', color: '#1a1a1a' }}
         />
         {(Array.isArray(survey.custom_fields) ? survey.custom_fields : []).map((field, idx) => (
           <input
@@ -220,15 +228,23 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
             placeholder={field.label}
             value={customFieldValues[field.label] || ''}
             onChange={e => setCustomFieldValues((prev) => ({ ...prev, [field.label]: e.target.value }))}
+            className={isDark ? 'birdsong-intro-input birdsong-intro-input-dark' : 'birdsong-intro-input'}
             style={isDark
-              ? { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 12, border: '1px solid #444', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#2c2c2e', color: '#e8e8e8' }
-              : { display: 'block', width: '100%', padding: '12px 16px', marginBottom: 12, border: '1px solid #ccc', borderRadius: 8, fontSize: 16, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }}
+              ? { display: 'block', width: '100%', padding: '12px 4px', border: 'none', borderBottom: '1px solid #ddd', borderRadius: 0, fontSize: 15, boxSizing: 'border-box', background: 'transparent', color: '#e8e8e8' }
+              : { display: 'block', width: '100%', padding: '12px 4px', border: 'none', borderBottom: '1px solid #ddd', borderRadius: 0, fontSize: 15, boxSizing: 'border-box', background: 'transparent', color: '#1a1a1a' }}
             required={field.required}
           />
         ))}
-        <button onClick={handleStart} disabled={loading || !name || !email || phone.length !== 14} style={{ background: isDark ? '#3a3a3c' : '#1a1a1a', color: '#ffffff', border: 'none', borderRadius: 8, padding: '12px 24px', fontSize: 16, cursor: 'pointer', opacity: name && email && phone.length === 14 ? 1 : 0.5 }}>
-          {loading ? 'Starting...' : 'Begin Interview'}
+        </div>
+        <button className="birdsong-intro-button" onClick={handleStart} disabled={loading || !name || !email || phone.length !== 14} style={{ width: '100%', background: '#1a1a1a', color: '#ffffff', border: 'none', borderRadius: 12, padding: 14, fontSize: 15, fontWeight: 500, marginTop: 24, cursor: 'pointer', opacity: name && email && phone.length === 14 ? 1 : 0.5 }}>
+          {loading ? (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              Starting
+              <span className="birdsong-loading-dots"><span>.</span><span>.</span><span>.</span></span>
+            </span>
+          ) : 'Begin Interview'}
         </button>
+        <p style={{ fontSize: 12, color: '#999', marginTop: 12 }}>{`Takes about ${introMinutes ? `${introMinutes}` : '5-10'} minutes`}</p>
       </div>
     </div>
   )
@@ -291,6 +307,34 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
         </div>
       </div>
       <style jsx>{`
+        @keyframes pulse {
+          0% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.05); opacity: 0.9; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .birdsong-logo-pulse {
+          animation: pulse 2s ease-in-out infinite;
+        }
+        .birdsong-intro-input:focus {
+          border-bottom-color: #1a1a1a !important;
+        }
+        .birdsong-intro-button:hover {
+          opacity: 0.85;
+        }
+        @keyframes dotPulse {
+          0%, 20% { opacity: 0; }
+          50% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+        .birdsong-loading-dots span {
+          animation: dotPulse 1.2s infinite;
+        }
+        .birdsong-loading-dots span:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+        .birdsong-loading-dots span:nth-child(3) {
+          animation-delay: 0.4s;
+        }
         .birdsong-intro-input-dark::placeholder {
           color: #888;
         }

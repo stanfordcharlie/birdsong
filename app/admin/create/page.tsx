@@ -146,17 +146,7 @@ export default function CreateSurveyPage() {
 
           <div style={{ marginBottom: 12 }}>
             {customFields.map((field, index) => (
-              <div key={index} style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 8 }}>
-                <input
-                  value={field.label}
-                  onChange={(e) => {
-                    const next = [...customFields]
-                    next[index] = { ...next[index], label: e.target.value }
-                    setCustomFields(next)
-                  }}
-                  placeholder="Field label"
-                  style={{ flex: 1, padding: '10px 12px', border: '1px solid #ccc', borderRadius: 8, fontSize: 14, boxSizing: 'border-box', background: '#ffffff', color: '#1a1a1a' }}
-                />
+              <div key={index} style={{ background: '#fff', borderRadius: 8, border: '1px solid #e5e5e5', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#666' }}>
                   <input
                     type="checkbox"
@@ -169,6 +159,21 @@ export default function CreateSurveyPage() {
                   />
                   Required
                 </label>
+                {field.label ? (
+                  <div style={{ flex: 1, fontSize: 14, color: '#1a1a1a' }}>{field.label}</div>
+                ) : (
+                  <input
+                    type="text"
+                    value={field.label}
+                    onChange={(e) => {
+                      const next = [...customFields]
+                      next[index] = { ...next[index], label: e.target.value }
+                      setCustomFields(next)
+                    }}
+                    placeholder="Field name"
+                    style={{ border: 'none', outline: 'none', fontSize: 14, flex: 1, background: 'transparent' }}
+                  />
+                )}
                 <button
                   type="button"
                   onClick={() => setCustomFields((prev) => prev.filter((_, i) => i !== index))}
@@ -183,17 +188,17 @@ export default function CreateSurveyPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
             <button
               type="button"
-              onClick={() => setCustomFields((prev) => [...prev, { label: '', required: false }])}
-              style={{ background: 'transparent', border: '1px dashed #ccc', borderRadius: 8, padding: '8px 16px', fontSize: 13, color: '#666', cursor: 'pointer' }}
+              onClick={() => setCustomFields((prev) => [...prev, { label: '', required: true }])}
+              style={{ background: 'transparent', border: '1px dashed #ccc', borderRadius: 8, padding: '10px 16px', fontSize: 13, color: '#666', cursor: 'pointer', width: '100%', marginTop: 8, textAlign: 'center' }}
             >
-              Add field
+              Add custom field
             </button>
             {['Company name', 'Job title', 'LinkedIn URL'].map((preset) => (
               <button
                 key={preset}
                 type="button"
-                onClick={() => setCustomFields((prev) => [...prev, { label: preset, required: false }])}
-                style={{ background: '#f0f0f0', border: 'none', borderRadius: 20, padding: '4px 12px', fontSize: 12, cursor: 'pointer' }}
+                onClick={() => setCustomFields((prev) => [...prev, { label: preset, required: true }])}
+                style={{ background: '#f0f0f0', border: 'none', borderRadius: 20, padding: '6px 14px', fontSize: 12, color: '#555', cursor: 'pointer', marginRight: 8 }}
               >
                 {preset}
               </button>
