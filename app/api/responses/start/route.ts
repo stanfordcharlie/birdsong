@@ -3,7 +3,7 @@ import { anthropic } from '@/lib/anthropic'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
-  const { surveyId, respondentName, respondentEmail } = await req.json()
+  const { surveyId, respondentName, respondentEmail, respondentPhone } = await req.json()
   const supabase = await createClient()
 
   const { data: survey } = await supabase
@@ -20,6 +20,7 @@ export async function POST(req: Request) {
       survey_id: surveyId,
       respondent_name: respondentName,
       respondent_email: respondentEmail,
+      respondent_phone: respondentPhone,
       messages: [],
       completed: false,
     })

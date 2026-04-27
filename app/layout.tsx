@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import AdminSidebar from '@/components/AdminSidebar'
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,7 +28,14 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full">
+        <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <AdminSidebar />
+          <div style={{ flex: 1 }} id="main-content">
+            {children}
+          </div>
+        </div>
+      </body>
     </html>
   );
 }

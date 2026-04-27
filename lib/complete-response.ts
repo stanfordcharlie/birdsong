@@ -13,7 +13,7 @@ export async function completeResponse(response: any) {
     messages: [
       {
         role: 'user',
-        content: `Based on this interview transcript, return ONLY a JSON object with no markdown, no backticks, no explanation. Format: {"pain_points": ["pain point 1", "pain point 2"], "lead_score": 7}. Lead score is 1-10 based on how strong a sales prospect this person appears to be. Transcript: ${JSON.stringify(response.messages)}`,
+        content: `Analyze this interview transcript and return ONLY a JSON object with no markdown, no backticks, no explanation. Format: {pain_points: [array of specific pain points mentioned], lead_score: number}. Score the lead 1-10 using these strict criteria: 9-10: explicitly mentions budget, timeline, or is actively looking for a solution. 7-8: clear pain points that match a software buying need. 5-6: some challenges mentioned but vague or low urgency. 3-4: general complaints, no buying signals. 1-2: no pain points or irrelevant responses. Be strict -- most responses should score 5-7 unless there are strong buying signals. Transcript: ${JSON.stringify(response.messages)}`,
       },
     ],
   })
