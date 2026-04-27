@@ -17,14 +17,17 @@ export default function AdminSurveysPage() {
   const supabase = useMemo(() => createClient(), [])
   const [surveys, setSurveys] = useState<Survey[]>([])
   const [selected, setSelected] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadSurveys() {
+      setLoading(true)
       const { data } = await supabase
         .from('surveys')
         .select('id, title, sponsor, slug, created_at')
         .order('created_at', { ascending: false })
       setSurveys((data || []) as Survey[])
+      setLoading(false)
     }
     void loadSurveys()
   }, [supabase])
@@ -56,48 +59,56 @@ export default function AdminSurveysPage() {
           Create a survey
         </Link>
 
-        <div style={{ marginTop: 20, overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
-            <thead>
-              <tr>
-                <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>
-                  <input type="checkbox" checked={allSelected} onChange={toggleAll} />
-                </th>
-                <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Title</th>
-                <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Sponsor</th>
-                <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Slug</th>
-                <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Created date</th>
-                <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Live URL</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(surveys || []).map((survey) => {
-                const liveUrl = `https://birdsong-ten.vercel.app/s/${survey.slug}`
-                const isSelected = selected.includes(survey.id)
-                return (
-                  <tr key={survey.id}>
-                    <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
-                      <input type="checkbox" checked={isSelected} onChange={() => toggleSurvey(survey.id)} />
-                    </td>
-                    <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
-                      <Link href={`/admin/surveys/${survey.id}`} style={{ color: '#1a1a1a', textDecoration: 'underline' }}>
-                        {survey.title}
-                      </Link>
-                    </td>
-                    <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>{survey.sponsor}</td>
-                    <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>{survey.slug}</td>
-                    <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
-                      {survey.created_at ? new Date(survey.created_at).toLocaleDateString() : ''}
-                    </td>
-                    <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
-                      <CopyUrlButton url={liveUrl} />
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
+        {loading ? (
+          <div style={{ marginTop: 20 }}>
+            <div className="skeleton" style={{ background: '#e8e3d8', borderRadius: 8, height: 44, width: '100%', marginBottom: 12 }} />
+            <div className="skeleton" style={{ background: '#e8e3d8', borderRadius: 8, height: 44, width: '100%', marginBottom: 12 }} />
+            <div className="skeleton" style={{ background: '#e8e3d8', borderRadius: 8, height: 44, width: '100%' }} />
+          </div>
+        ) : (
+          <div style={{ marginTop: 20, overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>
+                    <input type="checkbox" checked={allSelected} onChange={toggleAll} />
+                  </th>
+                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Title</th>
+                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Sponsor</th>
+                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Slug</th>
+                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Created date</th>
+                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Live URL</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(surveys || []).map((survey) => {
+                  const liveUrl = `https://birdsong-ten.vercel.app/s/${survey.slug}`
+                  const isSelected = selected.includes(survey.id)
+                  return (
+                    <tr key={survey.id}>
+                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
+                        <input type="checkbox" checked={isSelected} onChange={() => toggleSurvey(survey.id)} />
+                      </td>
+                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
+                        <Link href={`/admin/surveys/${survey.id}`} style={{ color: '#1a1a1a', textDecoration: 'underline' }}>
+                          {survey.title}
+                        </Link>
+                      </td>
+                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>{survey.sponsor}</td>
+                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>{survey.slug}</td>
+                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
+                        {survey.created_at ? new Date(survey.created_at).toLocaleDateString() : ''}
+                      </td>
+                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
+                        <CopyUrlButton url={liveUrl} />
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
       {selected.length > 0 && (
         <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', color: '#fff', borderRadius: 12, padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -110,6 +121,14 @@ export default function AdminSurveysPage() {
           </button>
         </div>
       )}
+      <style>{`
+@keyframes shimmer {
+0% { opacity: 0.5; }
+50% { opacity: 1; }
+100% { opacity: 0.5; }
+}
+.skeleton { animation: shimmer 1.2s ease-in-out infinite; }
+`}</style>
     </div>
   )
 }
