@@ -11,12 +11,13 @@ type AdminSidebarProps = {
 export default function AdminSidebar({ onWidthChange }: AdminSidebarProps) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(true)
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null)
 
   useEffect(() => {
     const stored = window.localStorage.getItem('birdsong-sidebar')
     if (stored === 'expanded') {
       setCollapsed(false)
-      onWidthChange?.(200)
+      onWidthChange?.(220)
       return
     }
     setCollapsed(true)
@@ -27,101 +28,115 @@ export default function AdminSidebar({ onWidthChange }: AdminSidebarProps) {
     const nextCollapsed = !collapsed
     setCollapsed(nextCollapsed)
     window.localStorage.setItem('birdsong-sidebar', nextCollapsed ? 'collapsed' : 'expanded')
-    onWidthChange?.(nextCollapsed ? 56 : 200)
+    onWidthChange?.(nextCollapsed ? 56 : 220)
   }
 
-  const navItems = [
+  const topNavItems = [
     {
       href: '/',
       label: 'Home',
       icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 10.5L12 3l9 7.5" />
-          <path d="M5 9.5V21h14V9.5" />
-        </svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
       ),
     },
     {
       href: '/admin/responses',
       label: 'Responses',
       icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="8" y1="6" x2="21" y2="6" />
-          <line x1="8" y1="12" x2="21" y2="12" />
-          <line x1="8" y1="18" x2="21" y2="18" />
-          <circle cx="4" cy="6" r="1" />
-          <circle cx="4" cy="12" r="1" />
-          <circle cx="4" cy="18" r="1" />
-        </svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
       ),
     },
     {
       href: '/admin/surveys',
       label: 'Surveys',
       icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
-          <path d="M14 2v6h6" />
-        </svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 9h6" /><path d="M9 13h6" /><path d="M9 17h4" /></svg>
       ),
-    },
+    }
+  ]
+
+  const bottomNavItems = [
     {
       href: '/admin/create',
       label: 'Create Survey',
       icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" /></svg>
+      ),
+    },
+    {
+      href: '/admin/settings',
+      label: 'Settings',
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14" /></svg>
       ),
     },
   ]
 
+  function renderNavItem(item: { href: string; label: string; icon: JSX.Element }) {
+    const isActive = item.href === '/' ? pathname === '/' : pathname === item.href || pathname.startsWith(`${item.href}/`)
+    const isHovered = hoveredItem === item.href
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onMouseEnter={() => setHoveredItem(item.href)}
+        onMouseLeave={() => setHoveredItem(null)}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          padding: collapsed ? '9px 0' : '9px 10px',
+          margin: collapsed ? '2px 4px' : '2px 8px',
+          borderRadius: 8,
+          fontSize: 14,
+          color: isActive ? '#1a1a1a' : '#333',
+          textDecoration: 'none',
+          background: isActive ? '#f0f4f0' : isHovered ? '#f5f5f5' : 'transparent',
+          fontWeight: isActive ? 500 : 400,
+          justifyContent: collapsed ? 'center' : 'flex-start',
+          height: 38,
+          position: 'relative',
+        }}
+      >
+        <span style={{ width: 18, height: 18, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</span>
+        {!collapsed && <span>{item.label}</span>}
+        {collapsed && isHovered && (
+          <span style={{ position: 'absolute', left: 52, background: '#1a1a1a', color: '#fff', padding: '5px 10px', borderRadius: 6, fontSize: 12, whiteSpace: 'nowrap', zIndex: 100, pointerEvents: 'none' }}>
+            {item.label}
+          </span>
+        )}
+      </Link>
+    )
+  }
+
   return (
-    <div style={{ width: collapsed ? 56 : 200, transition: 'width 200ms ease', background: '#1a1a1a', height: '100vh', position: 'fixed', left: 0, top: 0, zIndex: 10, overflow: 'hidden' }}>
-      <div style={{ padding: 16, color: '#fff', fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap' }}>
-        {collapsed ? 'B' : 'Birdsong'}
+    <div style={{ position: 'fixed', left: 0, top: 0, height: '100vh', zIndex: 10, width: collapsed ? 56 : 220, transition: 'width 200ms ease', background: '#ffffff', borderRight: '1px solid #f0f0f0', display: 'flex', flexDirection: 'column', overflow: 'visible' }}>
+      <div style={{ height: 56, display: 'flex', alignItems: 'center', paddingLeft: 16 }}>
+        {collapsed ? (
+          <div />
+        ) : (
+          <span style={{ fontSize: 15, fontWeight: 700, color: '#1a1a1a' }}>Birdsong</span>
+        )}
       </div>
       <button
         onClick={handleToggle}
-        style={{ width: 40, height: 40, background: 'transparent', border: 'none', color: '#999', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 8 }}
+        style={{ position: 'absolute', right: -12, top: 20, width: 24, height: 24, borderRadius: '50%', background: '#ffffff', border: '1px solid #e5e5e5', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 20, padding: 0 }}
         aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         {collapsed ? (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6" />
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 18l6-6-6-6" />
           </svg>
         ) : (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
           </svg>
         )}
       </button>
-      <div style={{ marginTop: 8 }}>
-        {navItems.map((item) => {
-          const isActive = pathname === item.href
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              style={{
-                height: 40,
-                display: 'flex',
-                alignItems: 'center',
-                padding: '0 16px',
-                gap: 12,
-                color: isActive ? '#ffffff' : '#999',
-                textDecoration: 'none',
-                borderRadius: 0,
-                background: isActive ? '#2a2a2a' : 'transparent',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {item.icon}
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
-          )
-        })}
+      <div style={{ padding: '8px 0', flex: 1 }}>
+        {topNavItems.map(renderNavItem)}
+        <div style={{ height: 1, background: '#f0f0f0', margin: '8px 16px' }} />
+        {bottomNavItems.map(renderNavItem)}
       </div>
     </div>
   )
