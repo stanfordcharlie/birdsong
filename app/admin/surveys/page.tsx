@@ -80,7 +80,7 @@ export default function AdminSurveysPage() {
                       <input type="checkbox" checked={isSelected} onChange={() => toggleSurvey(survey.id)} />
                     </td>
                     <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
-                      <Link href={`/admin/responses?survey=${survey.id}`} style={{ color: '#1a1a1a', textDecoration: 'underline' }}>
+                      <Link href={`/admin/surveys/${survey.id}`} style={{ color: '#1a1a1a', textDecoration: 'underline' }}>
                         {survey.title}
                       </Link>
                     </td>
