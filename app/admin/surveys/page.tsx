@@ -31,7 +31,7 @@ export default function AdminSurveysPage() {
     void fetchSurveys()
   }, [])
 
-  const allSelected = (surveys?.length || 0) > 0 && selected.length === surveys.length
+  const allSelected = (surveys?.length || 0) > 0 && selected.length === (surveys?.length ?? 0)
 
   function toggleSurvey(id: string) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
