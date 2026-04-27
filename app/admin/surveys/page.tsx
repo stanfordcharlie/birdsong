@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import CopyUrlButton from './CopyUrlButton'
 
@@ -14,40 +14,40 @@ type Survey = {
 }
 
 export default function AdminSurveysPage() {
-  const supabase = useMemo(() => createClient(), [])
-  const [surveys, setSurveys] = useState<Survey[]>([])
+  const [surveys, setSurveys] = useState<any[] | null>(null)
   const [selected, setSelected] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function loadSurveys() {
-      setLoading(true)
-      const { data } = await supabase
-        .from('surveys')
-        .select('id, title, sponsor, slug, created_at')
-        .order('created_at', { ascending: false })
-      setSurveys((data || []) as Survey[])
-      setLoading(false)
+    async function fetchSurveys() {
+      try {
+        const supabase = createClient()
+        const { data } = await supabase.from('surveys').select('*').order('created_at', { ascending: false })
+        setSurveys(data || [])
+      } finally {
+        setLoading(false)
+      }
     }
-    void loadSurveys()
-  }, [supabase])
+    void fetchSurveys()
+  }, [])
 
-  const allSelected = surveys.length > 0 && selected.length === surveys.length
+  const allSelected = (surveys?.length || 0) > 0 && selected.length === surveys.length
 
   function toggleSurvey(id: string) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
   }
 
   function toggleAll() {
-    setSelected(allSelected ? [] : surveys.map((survey) => survey.id))
+    setSelected(allSelected ? [] : (surveys || []).map((survey) => survey.id))
   }
 
   async function handleDelete() {
     if (selected.length === 0) return
     const confirmed = window.confirm(`Delete ${selected.length} survey(s)?`)
     if (!confirmed) return
+    const supabase = createClient()
     await supabase.from('surveys').delete().in('id', selected)
-    setSurveys((prev) => prev.filter((survey) => !selected.includes(survey.id)))
+    setSurveys((prev) => (prev || []).filter((survey) => !selected.includes(survey.id)))
     setSelected([])
   }
 
@@ -59,12 +59,14 @@ export default function AdminSurveysPage() {
           Create a survey
         </Link>
 
-        {loading ? (
+        {surveys === null || loading === true ? (
           <div style={{ marginTop: 20 }}>
             <div className="skeleton" style={{ background: '#e8e3d8', borderRadius: 8, height: 44, width: '100%', marginBottom: 12 }} />
             <div className="skeleton" style={{ background: '#e8e3d8', borderRadius: 8, height: 44, width: '100%', marginBottom: 12 }} />
             <div className="skeleton" style={{ background: '#e8e3d8', borderRadius: 8, height: 44, width: '100%' }} />
           </div>
+        ) : surveys.length === 0 ? (
+          <div style={{ marginTop: 20, fontSize: 14, color: '#999' }}>No surveys yet.</div>
         ) : (
           <div style={{ marginTop: 20, overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
