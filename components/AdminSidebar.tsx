@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -72,7 +73,7 @@ export default function AdminSidebar({ onWidthChange }: AdminSidebarProps) {
     },
   ]
 
-  function renderNavItem(item: { href: string; label: string; icon: JSX.Element }) {
+  function renderNavItem(item: { href: string; label: string; icon: React.ReactElement }) {
     const isActive = item.href === '/' ? pathname === '/' : pathname === item.href || pathname.startsWith(`${item.href}/`)
     const isHovered = hoveredItem === item.href
     return (
