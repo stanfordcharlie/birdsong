@@ -75,7 +75,7 @@ export default function SurveyInterview({ survey }: { survey: Survey }) {
 
   const colors = theme === 'light'
     ? {
-        background: '#f5f0e8',
+        background: '#f8f8f7',
         text: '#1a1a1a',
         inputBackground: 'transparent',
         assistantBubble: '#ede8df',

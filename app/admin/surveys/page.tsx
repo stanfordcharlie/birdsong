@@ -52,34 +52,36 @@ export default function AdminSurveysPage() {
   }
 
   return (
-    <div style={{ background: '#f5f0e8', minHeight: '100vh', fontFamily: 'Inter, sans-serif', color: '#1a1a1a' }}>
-      <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 24px 64px' }}>
-        <h1 style={{ margin: '0 0 20px', fontSize: 28, fontWeight: 600 }}>All Surveys</h1>
-        <Link href="/admin/create" style={{ color: '#1a1a1a', textDecoration: 'underline', fontSize: 14 }}>
-          Create a survey
+    <div style={{ background: '#f8f8f7', minHeight: '100vh', fontFamily: 'Inter, -apple-system, sans-serif', color: '#111111', marginLeft: 56 }}>
+      <div style={{ height: 56, background: '#ffffff', borderBottom: '1px solid #e5e7eb', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <h1 style={{ margin: 0, fontSize: 14, fontWeight: 500, color: '#111111' }}>Surveys</h1>
+        <Link href="/admin/create" style={{ color: '#111111', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}>
+          Create survey
         </Link>
+      </div>
+      <div style={{ padding: '32px 32px 64px' }}>
 
         {surveys === null || loading === true ? (
-          <div style={{ marginTop: 20 }}>
-            <div className="skeleton" style={{ background: '#e8e3d8', borderRadius: 8, height: 44, width: '100%', marginBottom: 12 }} />
-            <div className="skeleton" style={{ background: '#e8e3d8', borderRadius: 8, height: 44, width: '100%', marginBottom: 12 }} />
-            <div className="skeleton" style={{ background: '#e8e3d8', borderRadius: 8, height: 44, width: '100%' }} />
+          <div style={{ marginTop: 4 }}>
+            <div className="skeleton" style={{ background: '#f3f4f6', borderRadius: 6, height: 40, width: '100%', marginBottom: 12 }} />
+            <div className="skeleton" style={{ background: '#f3f4f6', borderRadius: 6, height: 40, width: '100%', marginBottom: 12 }} />
+            <div className="skeleton" style={{ background: '#f3f4f6', borderRadius: 6, height: 40, width: '100%' }} />
           </div>
         ) : surveys.length === 0 ? (
-          <div style={{ marginTop: 20, fontSize: 14, color: '#999' }}>No surveys yet.</div>
+          <div style={{ marginTop: 20, fontSize: 14, color: '#6b7280' }}>No surveys yet.</div>
         ) : (
-          <div style={{ marginTop: 20, overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
+          <div style={{ marginTop: 4, overflowX: 'auto', background: '#ffffff', borderRadius: 12, border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', background: '#ffffff' }}>
               <thead>
-                <tr>
-                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>
+                <tr style={{ background: '#f8f8f7' }}>
+                  <th style={{ textAlign: 'left', padding: '10px 16px', borderBottom: '1px solid #e5e7eb' }}>
                     <input type="checkbox" checked={allSelected} onChange={toggleAll} />
                   </th>
-                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Title</th>
-                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Sponsor</th>
-                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Slug</th>
-                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Created date</th>
-                  <th style={{ textAlign: 'left', padding: 12, borderBottom: '1px solid #ddd' }}>Live URL</th>
+                  <th style={{ textAlign: 'left', padding: '10px 16px', borderBottom: '1px solid #e5e7eb', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9ca3af' }}>Title</th>
+                  <th style={{ textAlign: 'left', padding: '10px 16px', borderBottom: '1px solid #e5e7eb', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9ca3af' }}>Sponsor</th>
+                  <th style={{ textAlign: 'left', padding: '10px 16px', borderBottom: '1px solid #e5e7eb', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9ca3af' }}>Slug</th>
+                  <th style={{ textAlign: 'left', padding: '10px 16px', borderBottom: '1px solid #e5e7eb', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9ca3af' }}>Created date</th>
+                  <th style={{ textAlign: 'left', padding: '10px 16px', borderBottom: '1px solid #e5e7eb', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#9ca3af' }}>Live URL</th>
                 </tr>
               </thead>
               <tbody>
@@ -88,20 +90,20 @@ export default function AdminSurveysPage() {
                   const isSelected = selected.includes(survey.id)
                   return (
                     <tr key={survey.id}>
-                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '12px 16px', borderBottom: '1px solid #f3f4f6' }}>
                         <input type="checkbox" checked={isSelected} onChange={() => toggleSurvey(survey.id)} />
                       </td>
-                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
-                        <Link href={`/admin/surveys/${survey.id}`} style={{ color: '#1a1a1a', textDecoration: 'underline' }}>
+                      <td style={{ padding: '12px 16px', borderBottom: '1px solid #f3f4f6', fontSize: 13 }}>
+                        <Link href={`/admin/surveys/${survey.id}`} style={{ color: '#111111', textDecoration: 'none', fontWeight: 500 }}>
                           {survey.title}
                         </Link>
                       </td>
-                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>{survey.sponsor}</td>
-                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>{survey.slug}</td>
-                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '12px 16px', borderBottom: '1px solid #f3f4f6', fontSize: 13, color: '#6b7280' }}>{survey.sponsor}</td>
+                      <td style={{ padding: '12px 16px', borderBottom: '1px solid #f3f4f6', fontSize: 13, color: '#6b7280' }}>{survey.slug}</td>
+                      <td style={{ padding: '12px 16px', borderBottom: '1px solid #f3f4f6', fontSize: 13, color: '#6b7280' }}>
                         {survey.created_at ? new Date(survey.created_at).toLocaleDateString() : ''}
                       </td>
-                      <td style={{ padding: 12, borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '12px 16px', borderBottom: '1px solid #f3f4f6' }}>
                         <CopyUrlButton url={liveUrl} />
                       </td>
                     </tr>
@@ -113,12 +115,12 @@ export default function AdminSurveysPage() {
         )}
       </div>
       {selected.length > 0 && (
-        <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', color: '#fff', borderRadius: 12, padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', background: '#111111', color: '#fff', borderRadius: 12, padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
           <span>{`${selected.length} selected`}</span>
-          <button onClick={handleDelete} style={{ background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', cursor: 'pointer' }}>
+          <button onClick={handleDelete} style={{ background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
             Delete
           </button>
-          <button onClick={() => setSelected([])} style={{ background: 'transparent', color: '#fff', border: '1px solid #555', borderRadius: 8, padding: '8px 16px', cursor: 'pointer' }}>
+          <button onClick={() => setSelected([])} style={{ background: 'transparent', color: '#fff', border: '1px solid #555', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', fontSize: 13 }}>
             Cancel
           </button>
         </div>

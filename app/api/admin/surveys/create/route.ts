@@ -3,6 +3,12 @@ import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
   const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   const body = await req.json()
 
   const {
@@ -38,6 +44,7 @@ export async function POST(req: Request) {
   const { data, error } = await supabase
     .from('surveys')
     .insert({
+      user_id: user.id,
       slug: finalSlug,
       title,
       topic,
